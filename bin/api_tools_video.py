@@ -1,4 +1,4 @@
-import httplib2, json, os, subprocess
+import httplib2, json, os, subprocess, uuid
 from urlparse import urlparse
 import keys, api_tools, api_tools_policy
 

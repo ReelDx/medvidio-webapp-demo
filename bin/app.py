@@ -140,7 +140,7 @@ class video_upload:
 
 	def POST(self):
 		form = web.input(videoFile={})
-		save_uuid, save_path = api_tools.video_upload(form['videoFile'].value, form['videoFile'].filename)
+		save_uuid, save_path = api_tools_video.video_upload(form['videoFile'].value, form['videoFile'].filename)
 		file_info = (save_uuid, save_path)
 		file_list.append(file_info)
 		return render.video_new(op_uuid = save_uuid)
