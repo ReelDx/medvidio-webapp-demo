@@ -179,8 +179,6 @@ class video_group_list:
 		if api_status == False:
 			final_output = render_tools.render_error(response_msg)
 		else:
-			# FIX-ME: Add ability for final_output to refect user policies when it comes to Play / Edit / Delete videos, currently this is only
-			# rendered based on Owner ID and Subject ID
 			final_output = render_tools.render_video_group_list(video_data)
 
 		return render.video_group_list(op_status = api_status, op_guid = form.GUID, op_mvid = form.MVID, op_group_id = form.group_id, op_data=final_output, op_API = render_tools.render_api_msg(api_msg))
