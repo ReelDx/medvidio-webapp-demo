@@ -1,0 +1,30 @@
+$def with (op_uuid)
+
+<html>
+    <head>
+        <title>Upload a Video: Step 2</title>
+    </head>
+<body>
+
+<h1>Upload a Video</h1>
+<h2>Step 2: Video Data</h2>
+<form action="/video_new" method="POST">
+    <h2>User Info</h2>
+    User GUID: <input type="text" name="GUID"> (required)</br>
+    User medvid.io ID: <input type="text" name="MVID"> (required)</br>
+    <h2>Video Info</h2>
+    Video Name: <input type="text" name="videoName"> (required)</br>
+    Video Description: <input type="text" name="videoDesc"></br>
+    Video Location: <input type="text" name="videoLoc"></br>
+    <h2>Video Access</h2>
+    Video Subject ID: <input type="text" name="videoSubject"> as medvid.io User ID</br>
+    Viewer IDs: <input type="text" name="videoViewers"> as comma separated medvid.io User IDs</br>
+    Group Viewer IDs: <input type="text" name="videoGroups"> as comma separated medvid.io Group IDs</br>
+    <input type="hidden" name="file_id" value=$op_uuid>
+    <input type="submit" name="submit" value="Next" />
+</form>
+
+</br>
+<a href="/video_upload">Back</a>     <a href="/">Home</a>
+</body>
+</html>

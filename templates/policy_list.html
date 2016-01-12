@@ -1,0 +1,39 @@
+$def with (op_status, op_mvid, op_guid, op_data, op_API)
+
+<html>
+    <head>
+        <title>List Policies</title>
+    </head>
+<body>
+$if not op_status:
+    <em style="color: red; font-size: 2em;">Oops!</em>
+	</br>
+	$op_data
+$else:
+	<h1>Policies</h1>
+	<h2>Select User</h2>
+	<form action="/policy_list" method="POST">
+		$if op_guid:
+	    	User GUID: <input type="text" name="GUID" value=$op_guid>
+	    $else:
+	    	User GUID: <input type="text" name="GUID">
+	    </br>
+	    $if op_mvid:
+	    	User medvid.io ID: <input type="text" name="MVID" value=$op_mvid>
+	    $else:
+	    	User medvid.io ID: <input type="text" name="MVID">
+	    </br></br>
+	    <input type="submit">
+	</form>
+
+	$if op_data:
+		<h1>Policies</h1>
+		$:op_data
+
+</br></br>
+<a href="/">Home</a>
+$if op_API:
+	<h3>API Info</h3>
+	$:op_API
+</body>
+</html>

@@ -1,0 +1,25 @@
+$def with (op_status, op_data, op_API)
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Play Video</title>
+        <!-- Flowplayer header objects -->
+        <link rel="stylesheet" href="//releases.flowplayer.org/6.0.4/skin/minimalist.css">
+ 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+ 		<script src="//releases.flowplayer.org/6.0.4/flowplayer.min.js"></script>
+    </head>
+<body>
+$if not op_status:
+    <em style="color: red; font-size: 2em;">Oops!</em>
+	</br>
+	$op_data
+$else:
+	$:op_data
+
+</br></br>
+<a href="/">Home</a>
+$if op_API:
+	<h3>API Info</h3>
+	$:op_API
+</body>
+</html>

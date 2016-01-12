@@ -1,0 +1,64 @@
+$def with (op_status, op_data, op_mvid, op_p_id, op_group_id, op_create, op_read, op_update, op_delete, op_list, op_API)
+
+<html>
+    <head>
+        <title>Manage Policies</title>
+    </head>
+<body>
+$if not op_status:
+    <em style="color: red; font-size: 2em;">Oops!</em>
+	</br>
+	$op_data
+$else:
+	<h1>Manage Policies</h1>
+	<h2>Select User</h2>
+	<form action="/policy_manage" method="POST">
+	    $if op_mvid:
+	    	User medvid.io ID: <input type="text" name="MVID" value=$op_mvid>
+	    $else:
+	    	User medvid.io ID: <input type="text" name="MVID">
+	<h2>Define Policy</h2>
+		$if op_p_id:
+	    	<input type="hidden" name="p_id" value=$op_p_id>
+	    $else:
+	    	<input type="hidden" name="p_id" value="">
+	    $if op_group_id:
+	    	Group ID: <input type="text" name="g_id" value=$op_group_id>
+	    $else:
+	    	Group ID: <input type="text" name="g_id">
+	    </br></br>
+		$if op_create == '1':
+		    Create: <input type="checkbox" name="_create" value="is_create" checked="checked">
+		$else:
+		    Create: <input type="checkbox" name="_create" value="is_create">
+		</br>
+		$if op_read == '1':
+		    Read: <input type="checkbox" name="_read" value="is_read" checked="checked">
+		$else:
+		    Read: <input type="checkbox" name="_read" value="is_read">
+		</br>
+		$if op_update == '1':
+		    Update: <input type="checkbox" name="_update" value="is_update" checked="checked">
+		$else:
+		    Update: <input type="checkbox" name="_update" value="is_update">
+		</br>
+		$if op_delete == '1':
+		    Delete: <input type="checkbox" name="_delete" value="is_delete" checked="checked">
+		$else:
+		    Delete: <input type="checkbox" name="_delete" value="is_delete">
+		</br>
+		$if op_list == '1':
+		    List: <input type="checkbox" name="_list" value="is_list" checked="checked">
+		$else:
+		    List: <input type="checkbox" name="_list" value="is_list">
+		</br></br>
+	<input type="submit">
+	</form>
+
+</br></br>
+<a href="/">Home</a>
+$if op_API:
+	<h3>API Info</h3>
+	$:op_API
+</body>
+</html>

@@ -1,0 +1,73 @@
+$def with (op_status, op_data, op_mvid, op_guid, op_vid, op_vname, op_vdesc, op_vloc, op_vown, op_vsub, op_vvids, op_vgids, op_API)
+
+<html>
+    <head>
+        <title>Edit a Video</title>
+    </head>
+<body>
+
+<h1>Edit a Video</h1>
+$if not op_status:
+    <em style="color: red; font-size: 2em;">Oops!</em>
+    </br>
+    $:op_data
+$else:
+    <form action="/video_update" method="POST">
+        <h2>User Info</h2>
+        $if op_guid:
+            User GUID: <input type="text" name="GUID" value=$op_guid readonly>
+        $else:
+            User GUID: <input type="text" name="GUID" readonly>
+        </br>
+        $if op_mvid:
+            User medvid.io ID: <input type="text" name="MVID" value=$op_mvid readonly>
+        $else:
+            User medvid.io ID: <input type="text" name="MVID"readonly>
+        <h2>Video Info</h2>
+        $if op_vname:
+            Video Name: <input type="text" name="videoName" value="${op_vname}"> (required)
+        $else:
+            Video Name: <input type="text" name="videoName"> (required)
+        </br>
+        $if op_vdesc:
+            Video Description: <input type="text" name="videoDesc" value="${op_vdesc}">
+        $else:
+            Video Description: <input type="text" name="videoDesc">
+        </br>
+        $if op_vloc:
+            Video Location: <input type="text" name="videoLocation" value="${op_vloc}">
+        $else:
+            Video Location: <input type="text" name="videoLocation">
+        </br>
+        <h2>Video Access</h2>
+        $if op_vown:
+            Video Owner ID: <input type="text" name="videoOwner" value=$op_vown readonly> as medvid.io User ID
+        $else:
+            Video Owner ID: <input type="text" name="videoOwner" readonly> as medvid.io User ID
+        </br>
+        $if op_vsub:
+            Video Subject ID: <input type="text" name="videoSubject" value=$op_vsub readonly> as medvid.io User ID
+        $else:
+            Video Subject ID: <input type="text" name="videoSubject" readonly> as medvid.io User ID
+        </br>
+        $if op_vvids:
+            Viewer IDs: <input type="text" name="videoViewers" value="${op_vvids}"> as comma separated medvid.io User IDs
+        $else:
+            Viewer IDs: <input type="text" name="videoViewers"> as comma separated medvid.io User IDs
+        </br>
+        $if op_vgids:
+            Group Viewer IDs: <input type="text" name="videoGroups" value="${op_vgids}"> as comma separated medvid.io Group IDs
+        $else:
+            Group Viewer IDs: <input type="text" name="videoGroups"> as comma separated medvid.io Group IDs
+        </br>
+        <input type="hidden" name="video_id" value=$op_vid>   
+        <input type="submit" name="submit" value="Submit" />
+    </form>
+
+</br>
+<a href="/">Home</a>
+$if op_API:
+    <h3>API Info</h3>
+    $:op_API
+</body>
+</html>

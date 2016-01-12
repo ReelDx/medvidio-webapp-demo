@@ -1,0 +1,23 @@
+$def with (op_status, op_data, op_API)
+
+<html>
+    <head>
+        <title>List Users</title>
+    </head>
+<body>
+
+<h1>Users</h1>
+$if not op_status:
+    <em style="color: red; font-size: 2em;">Oops!</em>
+	</br>
+	$op_data
+$else:
+	$:op_data
+
+</br></br>
+<a href="/">Home</a>
+$if op_API:
+	<h3>API Info</h3>
+	$:op_API
+</body>
+</html>
