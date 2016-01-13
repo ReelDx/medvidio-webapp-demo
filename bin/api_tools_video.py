@@ -214,6 +214,8 @@ def video_play(target_jwt, file_id):
 
 	if not content:
 		return False, None, str(response), api_msg
+	elif response.get("status") != "200":
+		return False, None, "Response: " + str(response) + " Content: "+ str(content), api_msg
 
 	data = json.loads(content)
 	smil_data = data.get('smil_url')
