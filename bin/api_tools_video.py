@@ -214,6 +214,8 @@ def video_play(target_jwt, file_id):
 
 	if not content:
 		return False, None, str(response), api_msg
+	elif response.get("status") != "200":
+		return False, None, "Response: " + str(response) + " Content: "+ str(content), api_msg
 
 	data = json.loads(content)
 	smil_data = data.get('smil_url')
@@ -323,7 +325,8 @@ def video_upload(videoFile, fileName):
 	base_ext = fileName.split('.')[-1]
 
 	save_uuid = str(uuid.uuid4())
-	save_path = str(os.getcwd()) + "/temp/" + save_uuid + "." + base_ext
+	save_path = os.path.join(os.getcwd(), 'temp', save_uuid + "." + base_ext)
+
 	fp = open(save_path,'wb')
 	fp.write(videoFile)
 	fp.close()
