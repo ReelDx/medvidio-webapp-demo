@@ -483,7 +483,7 @@ def video_update(user_jwt, video_id, videoName, videoDesc, videoLoc, videoOwner,
 			user_viewer_ids = parsedVideoViewers
 
 	group_viewer_ids = None
-	if videoViewers:
+	if videoGroups:
 		parsedGroupViewers = api_tools.api_parse_csv(videoGroups)
 		if parsedGroupViewers and len(parsedGroupViewers) > 0:
 			group_viewer_ids = parsedGroupViewers
