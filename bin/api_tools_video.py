@@ -1,4 +1,4 @@
-import httplib2, json, os, subprocess, uuid
+import httplib2, json, os, uuid, requests
 from urlparse import urlparse
 import keys, api_tools, api_tools_policy
 
@@ -214,6 +214,8 @@ def video_play(target_jwt, file_id):
 
 	if not content:
 		return False, None, str(response), api_msg
+	elif response.get("status") != "200":
+		return False, None, "Response: " + str(response) + " Content: "+ str(content), api_msg
 
 	data = json.loads(content)
 	smil_data = data.get('smil_url')
@@ -323,7 +325,8 @@ def video_upload(videoFile, fileName):
 	base_ext = fileName.split('.')[-1]
 
 	save_uuid = str(uuid.uuid4())
-	save_path = str(os.getcwd()) + "/temp/" + save_uuid + "." + base_ext
+	save_path = os.path.join(os.getcwd(), 'temp', save_uuid + "." + base_ext)
+
 	fp = open(save_path,'wb')
 	fp.write(videoFile)
 	fp.close()
@@ -353,16 +356,14 @@ def video_post(user_jwt, MVID, videoName, videoDesc, videoLoc, videoPath, videoS
 	#		Error Message (str) or None
 	#		Api Message (dict)
 	#
+	headers = {
+	'Accept': 'application/json',
+	'Authorization': 'Bearer ' + str(user_jwt)
+	}
 
-	# FIX-ME: Find way to make this work with httplib2 to be consistent with other API calls
 	uri = keys.apollo_root
 	path = '/video'
 	url = uri + path
-
-	headers = [
-		'Accept: application/json',
-		'Authorization: Bearer ' + user_jwt
-		]
 
 	# Attempt conversion to int; abondon and default to str if needed
 	try:
@@ -375,68 +376,59 @@ def video_post(user_jwt, MVID, videoName, videoDesc, videoLoc, videoPath, videoS
 	except:
 		videoSubject = str(videoSubject)
 
-	data = {
+	json_data = {
 	"owner_id":MVID,
 	"title":videoName,
 	}
 
 	if videoDesc:
-		data.update({"description":videoDesc})
+		json_data.update({"description":videoDesc})
 
 	if videoLoc:
-		data.update({"location":videoLoc})
+		json_data.update({"location":videoLoc})
 
 	if videoSubject:
-		data.update({"subject_id":videoSubject})
+		json_data.update({"subject_id":videoSubject})
 
 	if videoViewers:
 		parsedVideoViewers = api_tools.api_parse_csv(videoViewers)
 		if parsedVideoViewers and len(parsedVideoViewers) > 0:
-			data.update({"user_viewer_ids":parsedVideoViewers})
+			json_data.update({"user_viewer_ids":parsedVideoViewers})
 
 	if videoGroups:
 		parsedVideoGroups = api_tools.api_parse_csv(videoGroups)
 		if parsedVideoGroups and len(parsedVideoGroups) > 0:
-			data.update({"group_viewer_ids":parsedVideoGroups})
-
-	command = ["curl","--insecure"]
-
-	for i in headers:
-		command.extend(["-H", i])
-	
-	command.extend(["--form","json=%s" % json.dumps(data),"-F","media=@%s" % videoPath,"-i",url])
+			json_data.update({"group_viewer_ids":parsedVideoGroups})
 
 	# Assemble data for human readable cURL info
-	temp_headers = {
-	'Accept': 'application/json',
-	'Authorization': 'Bearer ' + str(user_jwt)
-	}
 	temp_body = {
-	'--form':"json=%s" % json.dumps(data),
+	'--form':"json=%s" % json.dumps(json_data),
 	'-F':"media=@%s" % videoPath
 	}
+
 	# Render human readable API message for output
-	api_msg = api_tools.api_msg_render(temp_headers, temp_body, None, url)
+	api_msg = api_tools.api_msg_render(headers, temp_body, None, url)
 
-	output = ""
 	try:
-		output = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[0]
-		temp_data = json.loads(output.split("\r\n\r\n")[2])
-		
-		if temp_data.get('errors'):
-			return False, None, "Error: Request: "+str(command)+" Response: "+str(temp_data['errors']), api_msg
-
-		output_data = {"video_title":str(temp_data['video']['title']),
-			"video_id":str(temp_data['video']['id']),
-			"MVID":str(MVID),
-			"video_created_at":str(temp_data['video']['created_at'])
-			}
-
-		return True, output_data, None, api_msg
+		response = requests.post(url,
+			data={"json":json.dumps(json_data)}, 
+			files={"media": open(videoPath, 'rb')}, 
+			headers=headers)
 	except:
-		return False, None, "Error: invalid response. Request: " + str(command), api_msg
+		return False, None, "Error: Request exception", api_msg
 
-	return False, None, "Error: unknown failure", api_msg
+	if response.status_code != 201:
+		return False, None, "Response: " + str(response.status_code) + " Content: "+ str(response.text), api_msg
+
+	# Successful Upload, parse JSON
+	temp_data = response.json()
+	output_data = {
+	"video_title":str(temp_data['video']['title']),
+	"video_id":str(temp_data['video']['id']),
+	"MVID":str(MVID),
+	"video_created_at":str(temp_data['video']['created_at'])
+	}
+	return True, output_data, None, api_msg
 
 def video_update(user_jwt, video_id, videoName, videoDesc, videoLoc, videoOwner, videoSubject, videoViewers, videoGroups):
 	#
@@ -480,7 +472,7 @@ def video_update(user_jwt, video_id, videoName, videoDesc, videoLoc, videoOwner,
 			user_viewer_ids = parsedVideoViewers
 
 	group_viewer_ids = None
-	if videoViewers:
+	if videoGroups:
 		parsedGroupViewers = api_tools.api_parse_csv(videoGroups)
 		if parsedGroupViewers and len(parsedGroupViewers) > 0:
 			group_viewer_ids = parsedGroupViewers
