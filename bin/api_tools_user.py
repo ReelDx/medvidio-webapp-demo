@@ -96,7 +96,7 @@ def user_list(account_jwt):
 	if user_data:
 		for user_obj in user_data:
 			tmp_app_id = user_obj.get('app_id')
-			if(int(tmp_app_id) == int(keys.app_id)):
+			if(tmp_app_id == keys.app_id):
 				app_user_id = str(user_obj.get('app_user_id'))
 				app_info, app_user_id = app_user_id.split('|',1)
 				temp_id = str(user_obj.get('id'))

@@ -203,7 +203,7 @@ def render_video_play(smil_data):
 	#	output: HTML formatted Response (str)
 	#
 	
-	output_data = None
+	output_data = ""
 
 	# JW Player Enterprise
 	if keys.jw_path and keys.jw_key:
